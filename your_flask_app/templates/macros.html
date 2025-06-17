@@ -1,0 +1,25 @@
+{# your_flask_app/templates/macros.html #}
+
+{# Este archivo puede contener macros Jinja2 reutilizables.
+   Por ahora, si solo usas `bootstrap/wtf.html`, este archivo puede estar vacío o contener
+   tus propias macros personalizadas que necesites en múltiples plantillas.
+   
+   Ejemplo de una macro simple:
+   
+   {% macro render_field(field) %}
+       <div class="form-group">
+           {{ field.label(class_="form-label") }}
+           {{ field(class_="form-control") }}
+           {% if field.errors %}
+               <ul class="errors">
+                   {% for error in field.errors %}
+                       <li>{{ error }}</li>
+                   {% endfor %}
+               </ul>
+           {% endif %}
+       </div>
+   {% endmacro %}
+#}
+
+{# Si no vas a usar macros personalizadas, puedes dejar este archivo vacío.
+   Lo importante es que exista si lo importas en algún lugar. #}

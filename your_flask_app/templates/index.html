@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="mb-4 text-center">Bienvenido al Programa de Becas de IRSI</h1>
+    <p class="lead text-center">¡Descubre las oportunidades de capacitación que tenemos para ti!</p>
+
+    <div class="row mt-5 justify-content-center">
+
+        {# Recuadro para Programadores Jr #}
+        <div class="col-md-5 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Programación con Python para Principiantes</h5>
+                    <p class="card-text">
+                        Aprende los fundamentos de Python para el desarrollo de software.
+                    </p>
+                    <a href="{{ url_for('main.curso_detalle', slug='programacion-python') }}" class="btn btn-primary btn-block mt-3">
+                        Ver Detalles del Curso
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {# Recuadro para Ciberseguridad #}
+        <div class="col-md-5 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Desarrollo Web con Flask</h5>
+                    <p class="card-text">
+                        Construye aplicaciones web robustas y escalables utilizando el framework Flask de Python.
+                    </p>
+                    <a href="{{ url_for('main.curso_detalle', slug='desarrollo-web-flask') }}" class="btn btn-primary btn-block mt-3">
+                        Ver Detalles del Curso
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{# your_flask_app/templates/admin/manage_inscripcion.html #}
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="mb-4 text-center">Gestión de Inscripciones a Becas</h1>
+
+    {% if inscripciones %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID Inscripción</th>
+                        <th>Estudiante (DNI)</th>
+                        <th>Curso</th>
+                        <th>Fecha Solicitud</th>
+                        <th>Estado</th>
+                        <th>Razón Rechazo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inscripcion in inscripciones %}
+                    <tr>
+                        <td>{{ inscripcion.id }}</td>
+                        <td>
+                            {% if inscripcion.estudiante %}
+                                {{ inscripcion.estudiante.nombre }} {{ inscripcion.estudiante.apellidos }} ({{ inscripcion.estudiante.dni }})
+                            {% else %}
+                                N/A (Estudiante Eliminado)
+                            {% endif %}
+                        </td>
+                        <td>{{ inscripcion.curso_slug }}</td>
+                        <td>{{ inscripcion.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            {% if inscripcion.estado == 'pendiente' %}
+                                <span class="badge badge-info">Pendiente</span>
+                            {% elif inscripcion.estado == 'aceptada' %}
+                                <span class="badge badge-success">Aceptada</span>
+                            {% elif inscripcion.estado == 'rechazada' %}
+                                <span class="badge badge-danger">Rechazada</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ inscripcion.estado.capitalize() }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if inscripcion.razon_rechazo %}
+                                {{ inscripcion.razon_rechazo }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.update_inscripcion_status', inscripcion_id=inscripcion.id) }}" class="btn btn-sm btn-warning">Gestionar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center mt-5" role="alert">
+            <p class="lead">No hay inscripciones registradas en el sistema.</p>
+        </div>
+    {% endif %}
+{% endblock %}

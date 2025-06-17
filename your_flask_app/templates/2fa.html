@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{# ELIMINADA: {% import "bootstrap/wtf.html" as wtf %} #}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="mb-4">Autenticación de Dos Factores</h1>
+            <p>Hemos enviado un código a tu correo electrónico. Por favor, introdúcelo a continuación.</p>
+            <form method="POST">
+                {{ form.hidden_tag() }} {# IMPORTANTE para el token CSRF #}
+
+                <div class="mb-3">
+                    {{ form.code.label(class="form-label") }}
+                    {{ form.code(class="form-control", placeholder="Introduce tu código de 6 dígitos") }}
+                    {% if form.code.errors %}
+                        <div class="text-danger">
+                            {% for error in form.code.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.submit(class_="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

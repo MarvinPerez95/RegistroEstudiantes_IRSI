@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="mb-4 text-center">Panel de Administrador</h1>
+    <p class="lead text-center">Bienvenido al panel de administración. Aquí puedes gestionar usuarios, solicitudes de becas y otras configuraciones de la aplicación.</p>
+    
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Estudiantes Registrados</h5>
+                    <p class="card-text display-4">{{ total_estudiantes }}</p>
+                    <a href="{{ url_for('admin.student_list') }}" class="btn btn-primary mt-2">Gestionar Estudiantes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Inscripciones Pendientes</h5>
+                    <p class="card-text display-4">{{ inscripciones_pendientes }}</p>
+                    <a href="{{ url_for('admin.manage_inscripciones') }}" class="btn btn-warning mt-2">Revisar Inscripciones</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Añadir Solicitud Manual</h5>
+                    <p class="card-text">Permite a los administradores registrar un nuevo estudiante manualmente.</p>
+                    <a href="{{ url_for('main.solicitar_admision') }}" class="btn btn-success mt-2">Añadir Solicitud</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

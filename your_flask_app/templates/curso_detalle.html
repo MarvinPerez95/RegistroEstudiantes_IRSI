@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>{{ curso.nombre }}</h2>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Descripción del Curso:</h5>
+                    <p class="card-text">{{ curso.descripcion }}</p>
+
+                    <h5 class="mt-4">Requisitos para la Beca:</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Ser mayor de 18 años.</li>
+                        <li class="list-group-item">Disponer de 10 horas semanales para el estudio.</li>
+                        <li class="list-group-item">Tener conocimientos básicos de informática.</li>
+                        {# {% for requisito in curso.requisitos %}
+                            <li class="list-group-item">{{ requisito }}</li>
+                        {% endfor %} #}
+                    </ul>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('main.solicitar_admision', curso_slug=curso_slug) }}" class="btn btn-success">
+                         Solicitar beca para este curso
+                        </a>
+                        <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-lg ml-3">
+                            Volver a Cursos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

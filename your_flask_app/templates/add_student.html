@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block head_css %}
+    {{ super() }}
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .errors {
+            color: #dc3545;
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 0.25rem;
+        }
+        .informacion-veraz {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            border-radius: 6px;
+            background: #f9f9f9;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center">
+    {% if form.dni.data and form.dni.data != '' %}
+        Editar mi Información de Solicitud
+    {% else %}
+        Aplicar a la Beca
+    {% endif %}
+</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form method="POST" id="estudianteForm">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.nombre.label(class_="form-label") }}
+                {{ form.nombre(class_="form-control") }}
+                {% for error in form.nombre.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.apellidos.label(class_="form-label") }}
+                {{ form.apellidos(class_="form-control") }}
+                {% for error in form.apellidos.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.pais.label(class_="form-label") }}
+                {{ form.pais(class_="form-control", id="pais") }}
+                {% for error in form.pais.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.ciudad.label(class_="form-label") }}
+                {{ form.ciudad(class_="form-control", id="ciudad") }}
+                {% for error in form.ciudad.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.direccion.label(class_="form-label") }}
+                {{ form.direccion(class_="form-control") }}
+                {% for error in form.direccion.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.grado.label(class_="form-label") }}
+                {{ form.grado(class_="form-control") }}
+                {% for error in form.grado.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label for="dni" id="dni-label">{{ dni_label }}</label>
+                {{ form.dni(class_="form-control") }}
+                {% for error in form.dni.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.fecha_nacimiento.label(class_="form-label") }}
+                {{ form.fecha_nacimiento(class_="form-control") }}
+                {% for error in form.fecha_nacimiento.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.sexo.label(class_="form-label") }}
+                {{ form.sexo(class_="form-control") }}
+                {% for error in form.sexo.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.correo.label(class_="form-label") }}
+                {{ form.correo(class_="form-control", readonly=True) }}
+                {% for error in form.correo.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.telefono.label(class_="form-label") }}
+                {{ form.telefono(class_="form-control") }}
+                {% for error in form.telefono.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <!-- Campo oculto para el año de la solicitud -->
+            {{ form.anio_solicitud(type="hidden") }}
+
+            <div class="form-group">
+                {{ form.motivo.label(class_="form-label") }}
+                {{ form.motivo(class_="form-control", rows="3") }}
+                {% for error in form.motivo.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="informacion-veraz">
+                <strong>Declaración:</strong>
+                <p>Declaro bajo protesta de decir verdad que la información proporcionada es verídica y verificable.</p>
+                <div class="form-check">
+                    {{ form.veracidad(class_="form-check-input") }}
+                    {{ form.veracidad.label(class_="form-check-label") }}
+                </div>
+                {% for error in form.veracidad.errors %}
+                    <div class="errors">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group text-center mt-4">
+                {{ form.submit(class_="btn btn-primary btn-lg") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const LATAM_PAISES_CIUDADES = {{ LATAM_PAISES_CIUDADES | tojson }};
+    const NOMBRE_DOCUMENTO_POR_PAIS = {{ NOMBRE_DOCUMENTO_POR_PAIS | tojson }};
+
+    const paisSelect = document.getElementById('pais');
+    const ciudadSelect = document.getElementById('ciudad');
+    const dniLabel = document.getElementById('dni-label');
+
+    function updateDynamicFields() {
+        const selectedPais = paisSelect.value;
+        const ciudades = LATAM_PAISES_CIUDADES[selectedPais] || [];
+
+        ciudadSelect.innerHTML = '';
+
+        if (ciudades.length > 0) {
+            ciudades.forEach(ciudad => {
+                const option = document.createElement('option');
+                option.value = ciudad;
+                option.textContent = ciudad;
+                ciudadSelect.appendChild(option);
+            });
+        } else {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'No hay ciudades disponibles';
+            ciudadSelect.appendChild(option);
+        }
+
+        dniLabel.textContent = NOMBRE_DOCUMENTO_POR_PAIS[selectedPais] || 'Documento de Identificación';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateDynamicFields();
+
+        // Set initial ciudad if editing
+        const initialCiudad = "{{ form.ciudad.data }}";
+        if (initialCiudad && ciudadSelect.querySelector(`option[value="${initialCiudad}"]`)) {
+            ciudadSelect.value = initialCiudad;
+        }
+    });
+
+    paisSelect.addEventListener('change', updateDynamicFields);
+</script>
+{% endblock %}

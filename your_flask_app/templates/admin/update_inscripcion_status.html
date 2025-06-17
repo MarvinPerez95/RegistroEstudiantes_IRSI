@@ -1,0 +1,77 @@
+{# your_flask_app/templates/admin/update_inscripcion_status.html #}
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+    <h1 class="mb-4 text-center">Actualizar Estado de Inscripción</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title">Inscripción ID: {{ inscripcion.id }}</h5>
+                    <p class="card-text">Estudiante: 
+                        {% if inscripcion.estudiante %}
+                            {{ inscripcion.estudiante.nombre }} {{ inscripcion.estudiante.apellidos }} (DNI: {{ inscripcion.estudiante.dni }})
+                        {% else %}
+                            N/A (Estudiante Eliminado)
+                        {% endif %}
+                    </p>
+                    <p class="card-text">Curso: {{ inscripcion.curso_slug }}</p>
+                    <p class="card-text">Fecha de Solicitud: {{ inscripcion.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}</p>
+                    <p class="card-text">Estado Actual: 
+                        {% if inscripcion.estado == 'pendiente' %}
+                            <span class="badge badge-info">Pendiente</span>
+                        {% elif inscripcion.estado == 'aceptada' %}
+                            <span class="badge badge-success">Aceptada</span>
+                        {% elif inscripcion.estado == 'rechazada' %}
+                            <span class="badge badge-danger">Rechazada</span>
+                        {% else %}
+                            <span class="badge badge-secondary">{{ inscripcion.estado.capitalize() }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        {{ wtf.form_field(form.estado) }}
+                        {{ wtf.form_field(form.razon_rechazo) }} {# Este campo se puede hacer visible/invisible con JS #}
+
+                        <div class="form-group text-center mt-4">
+                            {{ form.submit(class_="btn btn-primary btn-lg") }}
+                            <a href="{{ url_for('admin.manage_inscripciones') }}" class="btn btn-secondary btn-lg ml-3">Volver a Inscripciones</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const estadoSelect = document.getElementById('estado');
+        const razonRechazoField = document.getElementById('razon_rechazo');
+        const razonRechazoGroup = razonRechazoField.closest('.form-group'); // Obtener el div que contiene el campo y su label
+
+        function toggleRazonRechazo() {
+            if (estadoSelect.value === 'rechazada') {
+                razonRechazoGroup.style.display = 'block'; // Mostrar el campo
+                razonRechazoField.setAttribute('required', 'required'); // Hacerlo requerido
+            } else {
+                razonRechazoGroup.style.display = 'none'; // Ocultar el campo
+                razonRechazoField.removeAttribute('required'); // No requerido
+                razonRechazoField.value = ''; // Limpiar el valor cuando se oculta
+            }
+        }
+
+        // Ejecutar al cargar la página para establecer el estado inicial
+        toggleRazonRechazo();
+
+        // Escuchar cambios en el selector de estado
+        estadoSelect.addEventListener('change', toggleRazonRechazo);
+    });
+</script>
+{% endblock %}

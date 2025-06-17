@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="mb-4 text-center">Estado de Mis Solicitudes de Beca</h1>
+
+    {% if estudiante %}
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="card-title">Mi Información de Estudiante</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Nombre Completo:</strong> {{ estudiante.nombre }} {{ estudiante.apellidos }}</p>
+                        <p><strong>País:</strong> {{ estudiante.pais }}</p>
+                        <p><strong>Ciudad:</strong> {{ estudiante.ciudad }}</p>
+                        <p><strong>DNI/Identificación:</strong> {{ estudiante.dni }}</p>
+                        <p><strong>Correo:</strong> {{ estudiante.correo }}</p>
+                        <p><strong>Teléfono:</strong> {{ estudiante.telefono }}</p>
+                        <p><strong>Grado de Estudios:</strong> {{ estudiante.grado }}</p>
+                        <p><strong>Fecha de Nacimiento:</strong> {{ estudiante.fecha_nacimiento.strftime('%d/%m/%Y') }}</p>
+                        <p><strong>Año de Solicitud Inicial:</strong> {{ estudiante.anio_solicitud }}</p>
+                        <p><strong>Sexo:</strong> {{ estudiante.sexo }}</p>
+                        <p><strong>Motivo de Solicitud:</strong> {{ estudiante.motivo }}</p>
+                        <p><strong>Veracidad Declarada:</strong>
+                            {% if estudiante.veracidad %}
+                                <span class="text-success">Sí</span>
+                            {% else %}
+                                <span class="text-danger">No</span>
+                            {% endif %}
+                        </p>
+                        <div class="text-end">
+                            <a href="{{ url_for('main.solicitar_admision') }}" class="btn btn-info">Editar Información</a>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="mb-3 mt-5 text-center">Inscripciones a Cursos</h3>
+                {% if inscripciones %}
+                    {% for inscripcion in inscripciones %}
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="card-title">
+                                    Inscripción para el Curso: {{ inscripcion.curso_slug }}
+                                </h4>
+                                <small>Fecha de Solicitud: {{ inscripcion.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}</small>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Estado Actual:</strong>
+                                    {% if inscripcion.estado == 'pendiente' %}
+                                        <span class="badge bg-info">Pendiente de Revisión</span>
+                                    {% elif inscripcion.estado == 'aceptada' %}
+                                        <span class="badge bg-success">¡Felicidades! Solicitud Aceptada</span>
+                                    {% elif inscripcion.estado == 'rechazada' %}
+                                        <span class="badge bg-danger">Solicitud Rechazada</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ inscripcion.estado.capitalize() }}</span>
+                                    {% endif %}
+                                </p>
+                                {% if inscripcion.razon_rechazo %}
+                                    <p><strong>Razón de Rechazo:</strong> {{ inscripcion.razon_rechazo }}</p>
+                                {% endif %}
+                                <p><strong>ID de Inscripción:</strong> {{ inscripcion.id }}</p>
+                                <p><strong>Estudiante ID:</strong> {{ inscripcion.estudiante_id }}</p>
+                                <p><strong>Curso Slug:</strong> {{ inscripcion.curso_slug }}</p>
+                                <p><strong>Fecha de Inscripción:</strong> {{ inscripcion.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}</p>
+                                <p><strong>Estado:</strong> {{ inscripcion.estado }}</p>
+                                <p><strong>Razón de Rechazo:</strong> {{ inscripcion.razon_rechazo or "N/A" }}</p>
+                                <p class="text-muted mt-3">Mantente atento a tu correo electrónico para futuras comunicaciones.</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-warning text-center mt-4" role="alert">
+                        Aún no tienes inscripciones a cursos. Explora nuestros <a href="{{ url_for('main.index') }}" class="alert-link">cursos disponibles</a>.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center mt-5" role="alert">
+            <p class="lead">Parece que aún no has completado tu información de estudiante.</p>
+            <p>Por favor, <a href="{{ url_for('main.solicitar_admision') }}" class="alert-link">completa tu solicitud de admisión</a> para empezar.</p>
+        </div>
+    {% endif %}
+{% endblock %}

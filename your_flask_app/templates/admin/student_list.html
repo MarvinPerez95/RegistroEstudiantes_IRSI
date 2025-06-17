@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="mb-4 text-center">Lista de Estudiantes Registrados</h1>
+    
+    {# Botón para AÑADIR Nueva Solicitud de Estudiante (Administrador) #}
+    <a href="{{ url_for('main.solicitar_admision') }}" class="btn btn-success mb-3">Añadir Nueva Solicitud</a>
+    
+    {% if students %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>DNI</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Rol de Usuario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.nombre }}</td>
+                        <td>{{ student.apellidos }}</td>
+                        <td>{{ student.dni }}</td>
+                        <td>{{ student.correo }}</td>
+                        <td>{{ student.telefono }}</td>
+                        <td>
+                            {# Mostrar el rol del usuario asociado si existe #}
+                            {% if student.user %}
+                                <span class="badge badge-primary">{{ student.user.role.capitalize() }}</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Sin Usuario</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {# Botón para EDITAR Estudiante - La ruta ahora es 'solicitar_admision' en el blueprint 'main' #}
+                            {# Y le pasamos el 'estudiante_id' como argumento de consulta para pre-rellenar el formulario #}
+                            <a href="{{ url_for('main.solicitar_admision', estudiante_id=student.id) }}" class="btn btn-sm btn-info">Editar</a>
+                            
+                            {# Botón para ELIMINAR Estudiante #}
+                            {# Usamos un formulario para la eliminación con POST para mayor seguridad #}
+                            <form action="{{ url_for('admin.delete_student', id=student.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este estudiante?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center mt-5" role="alert">
+            <p class="lead">No hay estudiantes registrados en el sistema.</p>
+        </div>
+    {% endif %}
+{% endblock %}
