@@ -1,18 +1,13 @@
 services:
   - type: web
-    name: registro-estudiantes-app
-    env: python
-    buildCommand: ""
-    startCommand: gunicorn app:app
+    name: flask-app-docker
+    env: docker
+    dockerfilePath: ./Dockerfile
     plan: free
     envVars:
-      - key: FLASK_ENV
-        value: production
       - key: SECRET_KEY
-        value: "una_clave_secreta"
-      - key: MAIL_USERNAME
-        value: "tucorreo@gmail.com"
-      - key: MAIL_PASSWORD
-        value: "tu_clave_app"
+        value: "tu_clave_secreta"
+      - key: RECAPTCHA_PUBLIC_KEY
+        value: "tu_site_key"
       - key: RECAPTCHA_SECRET_KEY
-        value: "clave_de_tu_recaptcha"
+        value: "tu_secret_key"
