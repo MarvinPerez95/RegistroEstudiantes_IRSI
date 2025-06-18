@@ -2,7 +2,7 @@
 
 import os
 from flask import Flask, render_template, redirect, url_for, flash, request, session, abort
-import logging
+import logging  # Para crear logs (registros de actidad del sistema)
 from logging.handlers import RotatingFileHandler
 
 
@@ -17,6 +17,8 @@ from .blueprints.main import main_bp
 from .blueprints.auth import auth_bp
 from .blueprints.admin import admin_bp
 
+
+#                   FUNCIÓN PRINCIPAL
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -29,6 +31,10 @@ def create_app():
 
     if not os.path.exists('logs'):
         os.mkdir('logs')
+# G
+    if not os.path.exists('temp_uploads'):
+        os.mkdir('temp_uploads')
+        
     file_handler = RotatingFileHandler(f'logs/{app.config["LOG_FILE"]}', maxBytes=10240, backupCount=10)
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
@@ -37,6 +43,8 @@ def create_app():
     app.logger.setLevel(logging.INFO)
     app.logger.info('App startup')
 
+
+#    CONFIGURAR CARFA DE USUARIOSa
     @login_manager.user_loader
     def load_user(user_id):
         from .models import User
@@ -61,7 +69,7 @@ def create_app():
     # def inject_bootstrap():
     #     return dict(bootstrap=bootstrap) # <--- SOLO SI TENÍAS FLASK-BOOTSTRAP5 Y YA NO ES 0.1.DEV1
 
-
+#   MANEJO DE ERRORES
     @app.errorhandler(403)
     def forbidden(e):
         return render_template('403.html'), 403
@@ -82,6 +90,8 @@ def create_app():
         
     return app
 
+
+# EJECUCIÓKN PRINCIPAL
 if __name__ == '__main__':
     app = create_app()
     with app.app_context():

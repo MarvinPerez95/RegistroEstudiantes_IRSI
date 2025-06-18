@@ -1,8 +1,22 @@
-{# your_flask_app/templates/admin/manage_inscripcion.html #}
+{# templates/admin/manage_inscripcion.html - ACTUALIZADO #}
 {% extends "base.html" %}
 
 {% block content %}
     <h1 class="mb-4 text-center">Gestión de Inscripciones a Becas</h1>
+
+    {# NUEVA SECCIÓN: Botones de acción #}
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <button onclick="location.reload()" class="btn btn-info">
+                <i class="fas fa-sync-alt"></i> Actualizar Página
+            </button>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ url_for('admin.export_inscripciones') }}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Exportar a Excel
+            </a>
+        </div>
+    </div>
 
     {% if inscripciones %}
         <div class="table-responsive">
@@ -33,13 +47,13 @@
                         <td>{{ inscripcion.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}</td>
                         <td>
                             {% if inscripcion.estado == 'pendiente' %}
-                                <span class="badge badge-info">Pendiente</span>
+                                <span class="badge bg-warning text-dark">Pendiente</span>
                             {% elif inscripcion.estado == 'aceptada' %}
-                                <span class="badge badge-success">Aceptada</span>
+                                <span class="badge bg-success">Aceptada</span>
                             {% elif inscripcion.estado == 'rechazada' %}
-                                <span class="badge badge-danger">Rechazada</span>
+                                <span class="badge bg-danger">Rechazada</span>
                             {% else %}
-                                <span class="badge badge-secondary">{{ inscripcion.estado.capitalize() }}</span>
+                                <span class="badge bg-secondary">{{ inscripcion.estado.capitalize() }}</span>
                             {% endif %}
                         </td>
                         <td>
@@ -57,9 +71,62 @@
                 </tbody>
             </table>
         </div>
+        
+        {# NUEVA SECCIÓN: Estadísticas #}
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total</h5>
+                        <h3 class="text-primary">{{ inscripciones|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Pendientes</h5>
+                        <h3 class="text-warning">{{ inscripciones|selectattr('estado', 'equalto', 'pendiente')|list|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Aceptadas</h5>
+                        <h3 class="text-success">{{ inscripciones|selectattr('estado', 'equalto', 'aceptada')|list|length }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Rechazadas</h5>
+                        <h3 class="text-danger">{{ inscripciones|selectattr('estado', 'equalto', 'rechazada')|list|length }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% else %}
         <div class="alert alert-info text-center mt-5" role="alert">
             <p class="lead">No hay inscripciones registradas en el sistema.</p>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        // Auto-refresh cada 30 segundos (opcional)
+        // setInterval(function() {
+        //     location.reload();
+        // }, 30000);
+        
+        console.log("Gestión de inscripciones cargada");
+    </script>
 {% endblock %}

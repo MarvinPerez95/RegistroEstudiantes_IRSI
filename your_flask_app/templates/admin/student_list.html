@@ -3,8 +3,63 @@
 {% block content %}
     <h1 class="mb-4 text-center">Lista de Estudiantes Registrados</h1>
     
-    {# Botón para AÑADIR Nueva Solicitud de Estudiante (Administrador) #}
-    <a href="{{ url_for('main.solicitar_admision') }}" class="btn btn-success mb-3">Añadir Nueva Solicitud</a>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <a href="{{ url_for('main.solicitar_admision') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Añadir Nueva Solicitud
+            </a>
+        </div>
+        <div class="col-md-4 text-center">
+            <a href="{{ url_for('admin.export_estudiantes') }}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Exportar Estudiantes
+            </a>
+        </div>
+        <div class="col-md-4 text-end">
+            <button type="button" class="btn btn-primary" onclick="openModal()">
+                <i class="fas fa-upload"></i> Subir Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="uploadExcelModal" tabindex="-1" aria-labelledby="uploadExcelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadExcelModalLabel">Subir Archivo Excel</h5>
+                    <button type="button" class="btn-close" onclick="closeModal()" aria-label="Close"></button>
+                </div>
+                <form method="POST" enctype="multipart/form-data" action="{{ url_for('admin.upload_excel') }}">
+                    {{ excel_form.hidden_tag() }}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            {{ excel_form.excel_file.label(class="form-label") }}
+                            {{ excel_form.excel_file(class="form-control", id="excel_file") }}
+                            {% if excel_form.excel_file.errors %}
+                                <div class="text-danger">
+                                    {% for error in excel_form.excel_file.errors %}
+                                        <small>{{ error }}</small><br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="alert alert-info">
+                            <small>
+                                <strong>Formato requerido:</strong><br>
+                                - Columnas: Nombre, Apellidos, DNI, Correo, Telefono, Pais, Ciudad, Direccion, Grado, Fecha_Nacimiento, Sexo, Motivo<br>
+                                - Formato de fecha: YYYY-MM-DD<br>
+                                - Solo archivos .xlsx o .xls
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                        {{ excel_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     
     {% if students %}
         <div class="table-responsive">
@@ -31,7 +86,6 @@
                         <td>{{ student.correo }}</td>
                         <td>{{ student.telefono }}</td>
                         <td>
-                            {# Mostrar el rol del usuario asociado si existe #}
                             {% if student.user %}
                                 <span class="badge badge-primary">{{ student.user.role.capitalize() }}</span>
                             {% else %}
@@ -39,12 +93,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            {# Botón para EDITAR Estudiante - La ruta ahora es 'solicitar_admision' en el blueprint 'main' #}
-                            {# Y le pasamos el 'estudiante_id' como argumento de consulta para pre-rellenar el formulario #}
                             <a href="{{ url_for('main.solicitar_admision', estudiante_id=student.id) }}" class="btn btn-sm btn-info">Editar</a>
-                            
-                            {# Botón para ELIMINAR Estudiante #}
-                            {# Usamos un formulario para la eliminación con POST para mayor seguridad #}
                             <form action="{{ url_for('admin.delete_student', id=student.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este estudiante?');">
                                 <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
                             </form>
@@ -59,4 +108,102 @@
             <p class="lead">No hay estudiantes registrados en el sistema.</p>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        console.log("Script cargado correctamente");
+        
+        // Función para abrir el modal manualmente
+        function openModal() {
+            console.log("Intentando abrir modal...");
+            const modal = document.getElementById('uploadExcelModal');
+            if (modal) {
+                // Intentar con Bootstrap 5
+                if (typeof bootstrap !== 'undefined') {
+                    console.log("Usando Bootstrap 5");
+                    const bootstrapModal = new bootstrap.Modal(modal);
+                    bootstrapModal.show();
+                } else {
+                    console.log("Bootstrap no disponible, mostrando modal manualmente");
+                    modal.style.display = 'block';
+                    modal.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    
+                    // Crear backdrop
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    backdrop.id = 'modalBackdrop';
+                    document.body.appendChild(backdrop);
+                }
+                console.log("Modal abierto");
+            } else {
+                console.error("Modal no encontrado");
+            }
+        }
+        
+        // Función para cerrar el modal
+        function closeModal() {
+            console.log("Cerrando modal...");
+            const modal = document.getElementById('uploadExcelModal');
+            if (modal) {
+                if (typeof bootstrap !== 'undefined') {
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    if (bootstrapModal) {
+                        bootstrapModal.hide();
+                    }
+                } else {
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                    
+                    // Remover backdrop
+                    const backdrop = document.getElementById('modalBackdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                }
+            }
+        }
+        
+        // Cuando el documento esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM cargado");
+            
+            // Verificar Bootstrap
+            if (typeof bootstrap === 'undefined') {
+                console.warn("Bootstrap no está disponible, usando funciones manuales");
+            } else {
+                console.log("Bootstrap disponible");
+            }
+            
+            // Manejar el formulario
+            const form = document.querySelector('#uploadExcelModal form');
+            if (form) {
+                console.log("Formulario encontrado y configurado");
+                
+                form.addEventListener('submit', function(e) {
+                    console.log("Formulario enviándose...");
+                    const fileInput = document.querySelector('#excel_file');
+                    
+                    if (!fileInput || !fileInput.files.length) {
+                        e.preventDefault();
+                        alert('Por favor, selecciona un archivo Excel.');
+                        return false;
+                    }
+                    
+                    console.log('Enviando archivo:', fileInput.files[0].name);
+                    // El formulario se enviará normalmente
+                });
+            } else {
+                console.error("Formulario no encontrado");
+            }
+        });
+    </script>
 {% endblock %}

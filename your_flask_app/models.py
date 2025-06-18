@@ -1,12 +1,11 @@
-from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-from .extensions import db # ¡Importa db desde extensions.py!
-from datetime import datetime
+from datetime import datetime                                                   # Importa herramientas para trabajar con fechas y horas
+from werkzeug.security import generate_password_hash, check_password_hash       # Importa funcione para Encriptar contraseñas y Verificar si una contraseña es correcta
+from flask_login import UserMixin                                               # Es como un "kit de herramientas" que le da "superpoderes" a la clase User para manejar sesiones de Login
+from .extensions import db # ¡Importa db desde extensions.py!                   # Importa db que es el "traductor" para hablar con la base de datos
 
 
 
-
+#                   MODELO USER (USUARIOS DEL SISTEMA)
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True, nullable=False, index=True) # email
@@ -15,6 +14,7 @@ class User(UserMixin, db.Model):
     two_factor_code = db.Column(db.String(6))
     two_factor_expiry = db.Column(db.DateTime)
 
+#               Métodos de la Clase User
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -24,6 +24,10 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
+
+
+
+#                   MODELO ESTUDIANTE (INFORMACIÓN DE ESTUDIANTES)
 class Estudiante(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
@@ -46,7 +50,11 @@ class Estudiante(db.Model):
 
     def __repr__(self):
         return f'<Estudiante {self.nombre} {self.apellidos}>'
+    
 
+
+
+#                   MODELO INSCRIPCIÓN (SOLICITUDES DE BECAS)
 class Inscripcion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     estudiante_id = db.Column(db.Integer, db.ForeignKey('estudiante.id'), nullable=False)

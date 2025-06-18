@@ -14,6 +14,7 @@ from ..extensions import db, mail # Necesario para la DB y enviar correos
 # Crea una instancia de Blueprint.
 auth_bp = Blueprint('auth', __name__, template_folder='../templates/auth') # Apunta a la subcarpeta de templates
 
+#                       FUNCIÓN DE REGISTRO
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -31,6 +32,8 @@ def register():
         return redirect(url_for('auth.login')) # Redirige al login del blueprint 'auth'
     return render_template('register.html', title='Registro', form=form)
 
+
+#                   FUNCIÓN DE INICIAR SESIÓN
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -53,8 +56,8 @@ def login():
         # Importar current_app para acceder a la configuración de MAIL_DEFAULT_SENDER
         from flask import current_app
         msg = Message('Código de Autenticación de Dos Factores',
-                      sender=current_app.config['MAIL_DEFAULT_SENDER'],
-                      recipients=[user.username])
+                        sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                        recipients=[user.username])
         msg.body = f"Tu código de autenticación de dos factores es: {two_factor_code}\n\nEste código es válido por 5 minutos."
 
         try:

@@ -1,36 +1,160 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white text-center">
-                    <h2>{{ curso.nombre }}</h2>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">Descripción del Curso:</h5>
-                    <p class="card-text">{{ curso.descripcion }}</p>
+<!-- Fuentes y estilos -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-                    <h5 class="mt-4">Requisitos para la Beca:</h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Ser mayor de 18 años.</li>
-                        <li class="list-group-item">Disponer de 10 horas semanales para el estudio.</li>
-                        <li class="list-group-item">Tener conocimientos básicos de informática.</li>
-                        {# {% for requisito in curso.requisitos %}
-                            <li class="list-group-item">{{ requisito }}</li>
-                        {% endfor %} #}
-                    </ul>
+<style>
+  :root {
+    --primary: #003366;
+    --accent: #00bcd4;
+    --bg: #f7f9fc;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --shadow: rgba(0, 0, 0, 0.05);
+  }
 
-                    <div class="text-center mt-4">
-                        <a href="{{ url_for('main.solicitar_admision', curso_slug=curso_slug) }}" class="btn btn-success">
-                         Solicitar beca para este curso
-                        </a>
-                        <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-lg ml-3">
-                            Volver a Cursos
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  body {
+    background: var(--bg);
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .container-detalle {
+    max-width: 960px;
+    margin: 70px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px var(--shadow);
+  }
+
+  .titulo-curso {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 25px;
+  }
+
+  .seccion-detalle {
+    margin-bottom: 40px;
+  }
+
+  .seccion-detalle h5 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.15rem;
+    margin-bottom: 12px;
+    color: var(--primary);
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+  }
+
+  .seccion-detalle p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .lista-requisitos {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .lista-requisitos li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 0.96rem;
+  }
+
+  .lista-requisitos li::before {
+    content: "\f26b";
+    font-family: 'Bootstrap-icons';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .acciones a {
+    padding: 12px 26px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-beca {
+    background-color: var(--accent);
+    color: white;
+  }
+
+  .btn-beca:hover {
+    background-color: #00a2bb;
+  }
+
+  .btn-volver {
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+  }
+
+  .btn-volver:hover {
+    background-color: var(--primary);
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .container-detalle {
+      margin: 40px 20px;
+      padding: 30px 20px;
+    }
+
+    .titulo-curso {
+      font-size: 1.6rem;
+    }
+
+    .acciones {
+      flex-direction: column;
+    }
+
+    .acciones a {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+
+<div class="container-detalle">
+  <h1 class="titulo-curso">{{ curso.nombre }}</h1>
+
+  <div class="seccion-detalle">
+    <h5>Descripción del Curso</h5>
+    <p>{{ curso.descripcion }}</p>
+  </div>
+
+  <div class="seccion-detalle">
+    <h5>Requisitos para la Beca</h5>
+    <ul class="lista-requisitos">
+      {% for requisito in curso.requisitos %}
+        <li>{{ requisito }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="acciones">
+    <a href="{{ url_for('main.solicitar_admision', curso_slug=curso_slug) }}" class="btn-beca">Solicitar beca para este curso</a>
+    <a href="{{ url_for('main.index') }}" class="btn-volver">Volver a Cursos</a>
+  </div>
+</div>
 {% endblock %}

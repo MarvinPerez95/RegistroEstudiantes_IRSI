@@ -1,21 +1,32 @@
+#                   Define TODOS los formularios del sistema (login, registro, solicitud de beca) y sus validacione.
+#                   
+
+
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DateField, TextAreaField, BooleanField, SubmitField, HiddenField,PasswordField, IntegerField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, Optional, Regexp
-from .models import User, Estudiante # Importa Estudiante para validación si es necesario
-from datetime import date
-from .data import LATAM_PAISES_CIUDADES # Importa tu diccionario de datos
+from flask_wtf.file import FileField, FileRequired, FileAllowed                                                                                                                 # Importa la clase base para crear formularios seguros con Flask
+from wtforms import StringField, SelectField, DateField, TextAreaField, BooleanField, SubmitField, HiddenField,PasswordField, IntegerField      # Omporta todos los tipos de campos que pueden tener un formunlario
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, Optional, Regexp                                          # Importa los validadores (reglas de validación)
+from .models import User, Estudiante # Importa Estudiante para validación si es necesario                                                       # Importa los modelos para hcer validaciones con la base de datos
+from datetime import date                                                                                                                       # Pata trabajar con fechas
+from .data import LATAM_PAISES_CIUDADES # Importa tu diccionario de datos      
+from flask_wtf.file import FileField, FileRequired, FileAllowed                                                                 # Importa el diccionario de países y cidudades
 
 
+#                   FORMULARIO DE LOGIN
 class LoginForm(FlaskForm):
     username = StringField('Correo Electrónico', validators=[DataRequired(), Email()])
     password = PasswordField('Contraseña', validators=[DataRequired()])
     remember_me = BooleanField('Recordarme')
     submit = SubmitField('Iniciar Sesión')
 
+
+#                   FORMULARIO DE CÓDIGO 2FA
 class TwoFactorForm(FlaskForm):
     code = StringField('Código 2FA', validators=[DataRequired(), Length(min=6, max=6)])
     submit = SubmitField('Verificar')
 
+
+#                   FORMULARIO DE REGISTRO
 class RegistrationForm(FlaskForm):
     username = StringField('Correo Electrónico', validators=[DataRequired(), Email()])
     password = PasswordField('Contraseña', validators=[DataRequired(), Length(min=6)])
@@ -28,6 +39,8 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Ese correo electrónico ya está registrado.')
 
+
+#                   FORMULARIO DE ESTUDIANTE (M.C)
 # Definición CORRECTA Y ÚNICA del EstudianteForm
 class EstudianteForm(FlaskForm):
     nombre = StringField('Nombre', validators=[DataRequired(), Length(max=100)])
@@ -76,6 +89,8 @@ class EstudianteForm(FlaskForm):
         if field.data > date.today():
             raise ValidationError('La fecha de nacimiento no puede ser en el futuro.')
 
+
+#                   FORMULARIO DE APROBACIÓN/RECHAZO (para Admin)
 # Nuevo formulario para la aprobación/rechazo de inscripciones (para el admin)
 class InscripcionApprovalForm(FlaskForm):
     estado = SelectField('Estado', choices=[
@@ -95,3 +110,12 @@ class InscripcionApprovalForm(FlaskForm):
             self.razon_rechazo.errors.append('Debes proporcionar una razón si el estado es "Rechazada".')
             return False
         return True
+    
+
+# NUEVO FORMULARIO PARA SUBIR ARCHIVOS EXCEL (G)
+class UploadExcelForm(FlaskForm):
+    excel_file = FileField('Archivo Excel', validators=[
+        FileRequired(message='Debes seleccionar un archivo.'),
+        FileAllowed(['xlsx', 'xls'], message='Solo se permiten archivos Excel (.xlsx, .xls)')
+    ])
+    submit = SubmitField('Subir y Procesar')
