@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Estudiantes Registrados</h5>
                     <p class="card-text display-4">{{ total_estudiantes }}</p>
-                    <a href="{{ url_for('admin.student_list') }}" class="btn btn-primary mt-2">Gestionar Estudiantes</a>
+                    <a href="{{ url_for('admin.student_list') }}" class="btn btn-primary mt-2"><i class="fas fa-users"></i> Gestionar Estudiantes</a> {# Añadido ícono #}
                 </div>
             </div>
         </div>
@@ -19,19 +19,39 @@
                 <div class="card-body">
                     <h5 class="card-title">Inscripciones Pendientes</h5>
                     <p class="card-text display-4">{{ inscripciones_pendientes }}</p>
-                    <a href="{{ url_for('admin.manage_inscripciones') }}" class="btn btn-warning mt-2">Revisar Inscripciones</a>
+                    <a href="{{ url_for('admin.manage_inscripciones') }}" class="btn btn-warning mt-2"><i class="fas fa-clipboard-list"></i> Revisar Inscripciones</a> {# Añadido ícono #}
                 </div>
             </div>
         </div>
+        {# Nuevo Card para Cursos (Opcional, pero útil como acceso rápido) #}
+        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card text-center shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Cursos Disponibles</h5>
+                <p class="card-text display-4">{{ total_cursos if total_cursos is defined else 'N/A' }}</p> {# total_cursos se pasará en el paso 2 #}
+                <a href="{{ url_for('admin.manage_cursos') }}" class="btn btn-info mt-2"><i class="fas fa-book-open"></i> Gestionar Cursos</a>
+            </div>
+        </div>
+    </div>
+        {# Añadir un card para Estadísticas #}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Estadísticas y Reportes</h5>
+                    <p class="card-text">Visualiza datos y tendencias del sistema.</p>
+                    <a href="{{ url_for('admin.admin_statistics') }}" class="btn btn-secondary mt-2"><i class="fas fa-chart-bar"></i> Ver Estadísticas</a>
+                </div>
+            </div>
+        </div>
+        {# Card de Añadir Solicitud Manual existente #}
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card text-center shadow-sm h-100">
                 <div class="card-body">
                     <h5 class="card-title">Añadir Solicitud Manual</h5>
                     <p class="card-text">Permite a los administradores registrar un nuevo estudiante manualmente.</p>
-                    <a href="{{ url_for('main.solicitar_admision') }}" class="btn btn-success mt-2">Añadir Solicitud</a>
+                    <a href="{{ url_for('main.solicitar_admision') }}" class="btn btn-success mt-2"><i class="fas fa-user-plus"></i> Añadir Solicitud</a> {# Añadido ícono #}
                 </div>
             </div>
         </div>
     </div>
-    
 {% endblock %}

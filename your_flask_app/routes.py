@@ -129,6 +129,9 @@ def manage_estudiante(estudiante_id=None): # <-- ¡MANTENEMOS estudiante_id=None
         initial_dni_label = NOMBRE_DOCUMENTO_POR_PAIS[form.pais.data]
 
     # --- LÓGICA PRINCIPAL DEL FORMULARIO ---
+    current_app.logger.debug(f"DEBUG: selected_pais = {selected_pais}")
+    current_app.logger.debug(f"DEBUG: form.ciudad.choices = {form.ciudad.choices}")
+
     if form.validate_on_submit():
         try:
             # Saneamiento de datos (mantener como lo tienes)

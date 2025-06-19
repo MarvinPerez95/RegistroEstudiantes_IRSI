@@ -1,0 +1,104 @@
+{# your_flask_app/templates/admin/admin_statistics.html #}
+
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    {# Ya no necesitamos el script de Plotly.js si usamos imágenes estáticas #}
+    <style>
+        /* Puedes añadir estilos para tu imagen si lo necesitas */
+        .mapa-estatico {
+            max-width: 100%;
+            height: auto;
+            display: block; /* Asegura que la imagen sea un bloque */
+            margin: 0 auto; /* Centra la imagen si el contenedor es más grande */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Estadísticas de Administración</h1>
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Estudiantes</h5>
+                        <p class="card-text fs-3">{{ total_estudiantes }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Inscripciones</h5>
+                        <p class="card-text fs-3">{{ total_inscripciones }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Cursos</h5>
+                        <p class="card-text fs-3">{{ total_cursos }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Inscripciones Pendientes</h5>
+                        <p class="card-text fs-3">{{ inscripciones_pendientes }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Mapa de Concentración de Estudiantes por País
+                    </div>
+                    <div class="card-body">
+                        {# Aquí se incrusta la IMAGEN PNG del mapa #}
+                        {% if mapa_coropletico_img_src %}
+                            <img src="{{ mapa_coropletico_img_src }}" 
+                                 alt="Mapa de Concentración de Estudiantes" 
+                                 class="img-fluid mapa-estatico">
+                        {% else %}
+                            <p class="text-danger">No se pudo cargar el mapa de países.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Estudiantes por País
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>País</th>
+                                    <th>Cantidad de Estudiantes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pais, cantidad in estudiantes_por_pais %}
+                                    <tr>
+                                        <td>{{ pais }}</td>
+                                        <td>{{ cantidad }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

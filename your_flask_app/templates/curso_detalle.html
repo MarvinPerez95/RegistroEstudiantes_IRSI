@@ -137,27 +137,31 @@
     }
   }
 </style>
-
 <div class="container-detalle">
   <h1 class="titulo-curso">{{ curso.nombre }}</h1>
 
   <div class="seccion-detalle">
-    <h5>Descripción del Curso</h5>
-    <p>{{ curso.descripcion }}</p>
+    <h3>Descripción</h3>
+    <p>{{ curso.descripcion | safe }}</p> {# Usa 'safe' si esperas HTML en la descripción #}
   </div>
 
   <div class="seccion-detalle">
-    <h5>Requisitos para la Beca</h5>
-    <ul class="lista-requisitos">
-      {% for requisito in curso.requisitos %}
-        <li>{{ requisito }}</li>
+    <h3>Requisitos</h3>
+    <ul>
+      {# Asume que los requisitos están separados por saltos de línea, si es texto plano #}
+      {% for req in curso.requisitos.split('\n') %}
+        <li>{{ req }}</li>
       {% endfor %}
     </ul>
   </div>
 
   <div class="acciones">
-    <a href="{{ url_for('main.solicitar_admision', curso_slug=curso_slug) }}" class="btn-beca">Solicitar beca para este curso</a>
-    <a href="{{ url_for('main.index') }}" class="btn-volver">Volver a Cursos</a>
+    {% if curso.activo %} {# Condición para mostrar el botón de solicitud #}
+      <a href="{{ url_for('main.solicitar_admision', curso_slug_param=curso.slug) }}" class="btn btn-beca">Solicitar Beca</a>
+    {% else %}
+      <span class="btn btn-secondary disabled">Inscripciones No Disponibles Actualmente</span>
+    {% endif %}
+    <a href="{{ url_for('main.index') }}" class="btn btn-volver">Volver a Cursos</a>
   </div>
 </div>
 {% endblock %}

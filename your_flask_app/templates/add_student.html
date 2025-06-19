@@ -87,6 +87,18 @@
                 {% endfor %}
             </div>
 
+            <div class="mb-3 form-group">
+                {{ form.institucion_educativa.label(class="form-label") }}
+                {{ form.institucion_educativa(class="form-control", placeholder="Nombre de la Institución Educativa") }}
+                {% if form.institucion_educativa.errors %}
+                    <div class="text-danger">
+                        {% for error in form.institucion_educativa.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
             <div class="form-group">
                 <label for="dni" id="dni-label">{{ dni_label }}</label>
                 {{ form.dni(class_="form-control") }}
@@ -137,6 +149,23 @@
                     <div class="errors">{{ error }}</div>
                 {% endfor %}
             </div>
+
+
+            <div class="mb-3">
+                            {{ form.curso_a_inscribir.label(class="form-label") }}
+                            {{ form.curso_a_inscribir(class="form-control") }}
+                            {% if form.curso_a_inscribir.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.curso_a_inscribir.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Seleccionar un curso es opcional si solo estás actualizando tu perfil.</small>
+            </div>
+
+
+
 
             <div class="informacion-veraz">
                 <strong>Declaración:</strong>

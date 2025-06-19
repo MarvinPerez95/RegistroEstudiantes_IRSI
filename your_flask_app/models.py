@@ -25,6 +25,27 @@ class User(UserMixin, db.Model):
         return f'<User {self.username}>'
 
 
+# --- NUEVO MODELO CURSO ---
+class Curso(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(100), unique=True, nullable=False, index=True) # e.g., 'programadores-junior'
+    nombre = db.Column(db.String(150), nullable=False)
+    descripcion = db.Column(db.Text, nullable=False)
+    requisitos = db.Column(db.Text, nullable=False) # Guardaremos como texto, podrías usar JSON para más estructura
+    activo = db.Column(db.Boolean, default=True, nullable=False) # Para habilitar/deshabilitar solicitudes
+    fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha_actualizacion = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Puedes omitir la línea de relación 'inscripciones' en Curso si quieres,
+    # pero no causa problema si está ahí. La necesidad se verá más adelante.
+    # inscripciones = db.relationship('Inscripcion', backref='curso_obj', lazy=True)
+
+    def __repr__(self):
+        return f'<Curso {self.nombre} ({self.slug})>'
+
+
+
+
 
 
 #                   MODELO ESTUDIANTE (INFORMACIÓN DE ESTUDIANTES)
@@ -36,6 +57,7 @@ class Estudiante(db.Model):
     ciudad = db.Column(db.String(100), nullable=False)
     direccion = db.Column(db.String(200), nullable=False)
     grado = db.Column(db.String(100), nullable=False)
+    institucion_educativa = db.Column(db.String(255), nullable=True) # O nullable=False si es obligatorio
     dni = db.Column(db.String(50), unique=True, nullable=False)
     fecha_nacimiento = db.Column(db.Date, nullable=False)
     correo = db.Column(db.String(120), unique=True, nullable=False)

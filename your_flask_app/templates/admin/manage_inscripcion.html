@@ -1,10 +1,93 @@
-{# templates/admin/manage_inscripcion.html - ACTUALIZADO #}
+{# your_flask_app/templates/admin/manage_inscripcion.html #}
 {% extends "base.html" %}
 
 {% block content %}
     <h1 class="mb-4 text-center">Gestión de Inscripciones a Becas</h1>
 
-    {# NUEVA SECCIÓN: Botones de acción #}
+    {# NUEVA SECCIÓN: Botones de acción y filtros #}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <form class="row g-3 align-items-end" method="GET" action="{{ url_for('admin.manage_inscripciones') }}">
+                <div class="col-md-3">
+                    <label for="estado" class="form-label">Filtrar por Estado:</label>
+                    <select class="form-select" id="estado" name="estado">
+                        <option value="all" {% if filter_estado == 'all' %}selected{% endif %}>Todos</option>
+                        <option value="pendiente" {% if filter_estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                        <option value="aceptada" {% if filter_estado == 'aceptada' %}selected{% endif %}>Aceptada</option>
+                        <option value="rechazada" {% if filter_estado == 'rechazada' %}selected{% endif %}>Rechazada</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="curso" class="form-label">Filtrar por Curso:</label>
+                    <select class="form-select" id="curso" name="curso">
+                        <option value="all" {% if filter_curso == 'all' %}selected{% endif %}>Todos</option>
+                        {% for slug in all_cursos %}
+                            <option value="{{ slug }}" {% if filter_curso == slug %}selected{% endif %}>
+                                {{ cursos_info[slug].titulo if slug in cursos_info else slug|replace('-', ' ')|title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Buscar Estudiante (Nombre, DNI, Correo):</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="search" name="search" placeholder="Buscar..." value="{{ search_query }}">
+                        <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="start_date" class="form-label">Fecha Inicio:</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="end_date" class="form-label">Fecha Fin:</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary me-2">Aplicar Filtros</button>
+                    <a href="{{ url_for('admin.manage_inscripciones') }}" class="btn btn-secondary">Limpiar Filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {# Contadores de estado (puedes dejarlos o quitarlos según prefieras con la paginación) #}
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total</h5>
+                    <h3 class="text-primary">{{ inscripciones.total }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Pendientes</h5>
+                    <h3 class="text-info">{{ inscripciones.items|selectattr('estado', 'equalto', 'pendiente')|list|length }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Aceptadas</h5>
+                    <h3 class="text-success">{{ inscripciones.items|selectattr('estado', 'equalto', 'aceptada')|list|length }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Rechazadas</h5>
+                    <h3 class="text-danger">{{ inscripciones.items|selectattr('estado', 'equalto', 'rechazada')|list|length }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Botones de acción #}
     <div class="row mb-3">
         <div class="col-md-6">
             <button onclick="location.reload()" class="btn btn-info">
@@ -12,19 +95,21 @@
             </button>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ url_for('admin.export_inscripciones') }}" class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Exportar a Excel
+            {# Pasa los parámetros de filtro actuales a la URL de exportación #}
+            <a href="{{ url_for('admin.export_inscripciones', estado=filter_estado, curso=filter_curso, search=search_query, start_date=start_date, end_date=end_date) }}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Exportar a Excel (filtrado)
             </a>
         </div>
     </div>
 
-    {% if inscripciones %}
+    {% if inscripciones.items %} {# Ahora usamos inscripciones.items para iterar #}
         <div class="table-responsive">
             <table class="table table-striped table-bordered table-hover">
                 <thead class="thead-dark">
                     <tr>
                         <th>ID Inscripción</th>
                         <th>Estudiante (DNI)</th>
+                        <th>Correo</th>
                         <th>Curso</th>
                         <th>Fecha Solicitud</th>
                         <th>Estado</th>
@@ -33,7 +118,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for inscripcion in inscripciones %}
+                    {% for inscripcion in inscripciones.items %} {# Iterar sobre los elementos paginados #}
                     <tr>
                         <td>{{ inscripcion.id }}</td>
                         <td>
@@ -43,78 +128,75 @@
                                 N/A (Estudiante Eliminado)
                             {% endif %}
                         </td>
-                        <td>{{ inscripcion.curso_slug }}</td>
+                        <td>{{ inscripcion.estudiante.correo if inscripcion.estudiante else 'N/A' }}</td>
+                        <td>
+                            {{ cursos_info[inscripcion.curso_slug].titulo if inscripcion.curso_slug in cursos_info else inscripcion.curso_slug|replace('-', ' ')|title }}
+                        </td>
                         <td>{{ inscripcion.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}</td>
                         <td>
                             {% if inscripcion.estado == 'pendiente' %}
-                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                <span class="badge bg-info">Pendiente</span>
                             {% elif inscripcion.estado == 'aceptada' %}
                                 <span class="badge bg-success">Aceptada</span>
                             {% elif inscripcion.estado == 'rechazada' %}
                                 <span class="badge bg-danger">Rechazada</span>
-                            {% else %}
-                                <span class="badge bg-secondary">{{ inscripcion.estado.capitalize() }}</span>
                             {% endif %}
                         </td>
+                        <td>{{ inscripcion.razon_rechazo or "N/A" }}</td>
                         <td>
-                            {% if inscripcion.razon_rechazo %}
-                                {{ inscripcion.razon_rechazo }}
-                            {% else %}
-                                N/A
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{{ url_for('admin.update_inscripcion_status', inscripcion_id=inscripcion.id) }}" class="btn btn-sm btn-warning">Gestionar</a>
+                            <a href="{{ url_for('admin.update_inscripcion_status', inscripcion_id=inscripcion.id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        
-        {# NUEVA SECCIÓN: Estadísticas #}
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Total</h5>
-                        <h3 class="text-primary">{{ inscripciones|length }}</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Pendientes</h5>
-                        <h3 class="text-warning">{{ inscripciones|selectattr('estado', 'equalto', 'pendiente')|list|length }}</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Aceptadas</h5>
-                        <h3 class="text-success">{{ inscripciones|selectattr('estado', 'equalto', 'aceptada')|list|length }}</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Rechazadas</h5>
-                        <h3 class="text-danger">{{ inscripciones|selectattr('estado', 'equalto', 'rechazada')|list|length }}</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+        {# Controles de Paginación #}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if inscripciones.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin.manage_inscripciones', page=inscripciones.prev_num, estado=filter_estado, curso=filter_curso, search=search_query, start_date=start_date, end_date=end_date) }}">Anterior</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Anterior</span>
+                    </li>
+                {% endif %}
+
+                {% for p in inscripciones.iter_pages() %}
+                    {% if p %}
+                        <li class="page-item {% if p == inscripciones.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('admin.manage_inscripciones', page=p, estado=filter_estado, curso=filter_curso, search=search_query, start_date=start_date, end_date=end_date) }}">{{ p }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if inscripciones.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin.manage_inscripciones', page=inscripciones.next_num, estado=filter_estado, curso=filter_curso, search=search_query, start_date=start_date, end_date=end_date) }}">Siguiente</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Siguiente</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
     {% else %}
         <div class="alert alert-info text-center mt-5" role="alert">
-            <p class="lead">No hay inscripciones registradas en el sistema.</p>
+            <p class="lead">No hay inscripciones registradas que coincidan con los filtros aplicados.</p>
         </div>
     {% endif %}
 {% endblock %}
 
-{% block head_css %}
+{% block head_css %}{# Mantenemos las importaciones de Font Awesome #}
     {{ super() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
@@ -122,11 +204,8 @@
 {% block scripts %}
     {{ super() }}
     <script>
-        // Auto-refresh cada 30 segundos (opcional)
-        // setInterval(function() {
-        //     location.reload();
-        // }, 30000);
-        
-        console.log("Gestión de inscripciones cargada");
+        // No hay scripts JS complejos aquí ya que los filtros se manejan por submit del formulario.
+        // Solo si tenías algún script específico para esta página, lo mantendrías.
+        // El auto-refresh que tenías se puede mantener si es deseado.
     </script>
 {% endblock %}

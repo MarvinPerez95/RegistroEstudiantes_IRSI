@@ -47,7 +47,7 @@ class EstudianteForm(FlaskForm):
     apellidos = StringField('Apellidos', validators=[DataRequired(), Length(max=100)])
     
     pais = SelectField('País', choices=[('', 'Seleccione un país')] + [(p, p) for p in sorted(LATAM_PAISES_CIUDADES.keys())], validators=[DataRequired()])
-    ciudad = SelectField('Ciudad', choices=[('', 'Seleccione un país primero')], validators=[DataRequired()])
+    ciudad = SelectField('Ciudad', choices=[], validators=[DataRequired()])
     
     direccion = StringField('Dirección', validators=[DataRequired(), Length(max=200)])
     grado = SelectField('Último Grado de Estudios', choices=[
@@ -60,6 +60,8 @@ class EstudianteForm(FlaskForm):
         ('Universitario Completo', 'Universitario Completo'),
         ('Posgrado', 'Posgrado')
     ], validators=[DataRequired()])
+    institucion_educativa = StringField('Institución Educativa', validators=[DataRequired(), Length(max=100)]) # O ajusta el validador a Optional() si no es obligatorio
+
     dni = StringField('Documento de Identificación', validators=[DataRequired(), Length(max=50)])
     fecha_nacimiento = DateField('Fecha de Nacimiento (YYYY-MM-DD)', format='%Y-%m-%d', validators=[DataRequired()])
 
@@ -71,11 +73,14 @@ class EstudianteForm(FlaskForm):
         ('Otro', 'Otro')
     ], validators=[DataRequired()])
 
-    correo = StringField('Correo Electrónico', validators=[DataRequired(), Email(), Length(max=120)], render_kw={'readonly': True})
+    correo = StringField('Correo Electrónico Personal', validators=[DataRequired(), Email(), Length(max=120)], render_kw={"readonly": True})
     telefono = StringField('Teléfono', validators=[DataRequired(), Length(max=20), Regexp(r'^\+?[0-9\s\-\(\)]{8,20}$', message="Formato de teléfono inválido.")])
     
     # ANIO DE SOLICITUD oculto, se maneja con HiddenField para que no sea visible
     anio_solicitud = HiddenField(default=str(date.today().year))
+
+    curso_a_inscribir = SelectField('Curso al que desea aplicar', validators=[Optional()])
+
 
     # NUEVO CAMPO: Motivo para solicitar la beca
     motivo = TextAreaField('¿Por qué desea obtener esta beca?', validators=[DataRequired(), Length(min=10, max=500)])

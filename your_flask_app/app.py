@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template, redirect, url_for, flash, request, session, abort
 import logging  # Para crear logs (registros de actidad del sistema)
 from logging.handlers import RotatingFileHandler
+from sqlalchemy import or_ # <--- ¡Añade esta línea!
 
 
 
