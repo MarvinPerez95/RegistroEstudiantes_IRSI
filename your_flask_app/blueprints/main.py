@@ -30,8 +30,9 @@ def curso_detalle(slug):
             
             # Agregué esto ya que el código estaba hardokeado, entonces los requisitos que se editaban aparecían en ambos apartados
             'requisitos': [
-                'Tener entre 18 a 35 años'
-                'Graduado a Niverl Medio'
+                'Tener entre 18 a 35 años',
+                'Graduado a Nivel Medio',
+                'Disponibilidad de estudiar de Lunes a Viernes'
             ],
             'imagen': 'python.png',
             'slug': 'programacion-python'
@@ -43,8 +44,17 @@ def curso_detalle(slug):
             
             # Agregué requitos al igual que arriba
             'requisitos': [
-                'La capacidad de programar en varios lenguajes es útil para entender mejor los sistemas y aplicaciones que se deben proteger.'
-                'Los conocimientos de redes son esenciales para entender cómo se conectan los sistemas y cómo se pueden proteger las redes contra posibles amenazas.'
+                'Estar cursandp 4to de ingeniería en Sistemas o carrera afín, o ser graduado universitario'
+                
+                'Excelencia Académica',
+                'Disponibilidad de tiempo lunes a viernes 4 horas de clase en línea sincrónica (no se graba), ya sea en horario matutino (7:00 am a 11:00 am), o vespertino (6:00 pm a 10:00pm) hora Guatemala  (GMT-6), durante 9 meses continuos, cada grupo con sus respectivos espacios de descanso.',
+                'Autodidacta y ser disciplinado(a).',
+                'Inglés técnico intermedio B1 (deseable).',
+                'Contar con acceso a internet y computadora.',
+                'No tener experiencia en el área de ciberseguridad.',
+                'Realizar todos los pasos del proceso de admisión de manera exitosa y en tiempo',
+                'La capacidad de programar en varios lenguajes es útil para entender mejor los sistemas y aplicaciones que se deben proteger.',
+                'Los conocimientos de redes son esenciales para entender cómo se conectan los sistemas y cómo se pueden proteger las redes contra posibles amenazas.',
                 'Es importante tener un conocimiento sólido de sistemas operativos como Windows y Linux para identificar vulnerabilidades en los sistemas y aplicaciones.'
             ],
             'imagen': 'flask.png',
@@ -61,6 +71,7 @@ def curso_detalle(slug):
         curso=curso,
         curso_slug=curso['slug']  # <--- Esta línea es clave
     )
+
 
 
 @main_bp.route('/solicitar_admision', methods=['GET', 'POST'])

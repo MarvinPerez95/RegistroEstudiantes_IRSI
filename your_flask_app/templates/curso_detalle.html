@@ -59,24 +59,27 @@
 
   .lista-requisitos {
     list-style: none;
-    padding-left: 0;
+    padding-left: 15px; 
   }
 
   .lista-requisitos li {
     position: relative;
-    padding-left: 24px;
-    margin-bottom: 12px;
-    color: var(--muted);
-    font-size: 0.96rem;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    color: var(--text); /* CAMBIADO: Color más oscuro para mejor legibilidad */
+    font-size: 1rem; /* AUMENTADO: Tamaño de fuente más grande */
+    line-height: 1.5; /* AGREGADO: Mejor interlineado */
   }
 
   .lista-requisitos li::before {
-    content: "\f26b";
-    font-family: 'Bootstrap-icons';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-  }
+  content: "✓"; /* CAMBIADO: Usar checkmark en lugar del ícono de Bootstrap */
+  position: absolute;
+  left: 0;
+  top: 2px; /* AGREGADO: Alineación vertical */
+  color: var(--accent);
+  font-weight: bold; /* AGREGADO: Hacer el checkmark más visible */
+  font-size: 1.1rem; /* AGREGADO: Hacer el ícono ligeramente más grande */
+}
 
   .acciones {
     display: flex;
