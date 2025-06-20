@@ -21,7 +21,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = (
         'mssql+pyodbc:///?odbc_connect='
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        f"SERVER={os.environ.get('DB_SERVER') or 'localhost'};"
+        f"SERVER={os.environ.get('DB_SERVER') or 'DESKTOP-MIF1BOH'};"
         f"DATABASE={os.environ.get('DB_DATABASE') or 'IRSI_ADMISION'};"
         f"UID={os.environ.get('DB_UID') or 'dbAdmin'};"
         f"PWD={os.environ.get('DB_PWD') or 'dbAdmin'}"

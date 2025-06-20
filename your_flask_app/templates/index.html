@@ -2,7 +2,8 @@
 
 {% block content %}
 <!-- Fuentes y Estilos globales -->
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+  rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 <style>
@@ -31,16 +32,19 @@
     color: white;
   }
 
+  /*
   .hero::before {
     content: "";
     position: absolute;
-    top: -80px; right: -80px;
-    width: 200px; height: 200px;
+    top: -80px;
+    right: -80px;
+    width: 200px;
+    height: 200px;
     background: var(--accent);
     opacity: 0.2;
     clip-path: polygon(0 0, 100% 0, 50% 100%, 0 100%);
   }
-
+*/
   .hero h1 {
     font-family: 'Montserrat', sans-serif;
     font-size: 3rem;
@@ -211,29 +215,36 @@
     color: #6b7280;
   }
 
-.cursos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
-}
+  .cursos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
 
-.card-neu {
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
+  .card-neu {
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
 
 
 
   @media (max-width: 768px) {
-    .hero h1 { font-size: 2.25rem; }
-    .hero p { font-size: 1rem; }
+    .hero h1 {
+      font-size: 2.25rem;
+    }
+
+    .hero p {
+      font-size: 1rem;
+    }
+
     .courses {
       flex-direction: column;
       align-items: center;
     }
+
     .footer-container {
       flex-direction: column;
       text-align: center;
@@ -252,15 +263,15 @@
 <!-- CURSOS -->
 <section class="cursos-grid">
   {% if cursos %}
-    {% for curso in cursos %}
-      <div class="card-neu">
-        <h5>{{ curso.nombre }}</h5>
-        <p>{{ curso.descripcion[:100] }}...</p> {# Muestra una parte de la descripción #}
-        <a href="{{ url_for('main.curso_detalle', slug=curso.slug) }}">Ver Detalles del Curso</a>
-      </div>
-    {% endfor %}
+  {% for curso in cursos %}
+  <div class="card-neu">
+    <h5>{{ curso.nombre }}</h5>
+    <p>{{ curso.descripcion[:100] }}...</p> {# Muestra una parte de la descripción #}
+    <a href="{{ url_for('main.curso_detalle', slug=curso.slug) }}">Ver Detalles del Curso</a>
+  </div>
+  {% endfor %}
   {% else %}
-    <p class="text-center">No hay cursos disponibles actualmente.</p>
+  <p class="text-center">No hay cursos disponibles actualmente.</p>
   {% endif %}
 </section>
 
@@ -269,7 +280,8 @@
   <div class="footer-container">
     <div class="footer-logo">
       <img src="{{ url_for('static', filename='img/logo_irsi.png') }}" alt="IRSI Logo">
-      <p>IRSI (Information Risk and Security Institute) se dedica a capacitaciones, desarrollo e impartición de cursos técnicos y profesionales en el área de informática, tecnología y Seguridad de la Información.</p>
+      <p>IRSI (Information Risk and Security Institute) se dedica a capacitaciones, desarrollo e impartición de cursos
+        técnicos y profesionales en el área de informática, tecnología y Seguridad de la Información.</p>
       <div class="footer-social">
         <a href="#"><i class="bi bi-facebook"></i></a>
         <a href="#"><i class="bi bi-linkedin"></i></a>

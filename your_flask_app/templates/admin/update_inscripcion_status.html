@@ -3,77 +3,80 @@
 {# ELIMINADO: {% import "bootstrap/wtf.html" as wtf %} #}
 
 {% block content %}
-    <h1 class="mb-4 text-center">Actualizar Estado de Inscripción</h1>
+<h1 class="mb-4 text-center">Actualizar Estado de Inscripción</h1>
 
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="card-title">Inscripción ID: {{ inscripcion.id }}</h5>
-                    <p class="card-text">Estudiante: 
-                        {% if inscripcion.estudiante %}
-                            {{ inscripcion.estudiante.nombre }} {{ inscripcion.estudiante.apellidos }} (DNI: {{ inscripcion.estudiante.dni }})
-                        {% else %}
-                            N/A (Estudiante Eliminado)
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title">Inscripción ID: {{ inscripcion.id }}</h5>
+                <p class="card-text">Estudiante:
+                    {% if inscripcion.estudiante %}
+                    {{ inscripcion.estudiante.nombre }} {{ inscripcion.estudiante.apellidos }} (DNI: {{
+                    inscripcion.estudiante.dni }})
+                    {% else %}
+                    N/A (Estudiante Eliminado)
+                    {% endif %}
+                </p>
+                <p class="card-text">Curso: {{ inscripcion.curso_slug }}</p>
+                <p class="card-text">Fecha de Solicitud: {{ inscripcion.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}
+                </p>
+                <p class="card-text">Estado Actual:
+                    {% if inscripcion.estado == 'pendiente' %}
+                    <span class="badge bg-info text-dark">Pendiente</span> {# Usar bg-info para Bootstrap 5 #}
+                    {% elif inscripcion.estado == 'aceptada' %}
+                    <span class="badge bg-success">Aceptada</span>
+                    {% elif inscripcion.estado == 'rechazada' %}
+                    <span class="badge bg-danger">Rechazada</span>
+                    {% else %}
+                    <span class="badge bg-secondary">{{ inscripcion.estado }}</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }} {# IMPORTANTE para el token CSRF #}
+
+                    <div class="form-group mb-3">
+                        {{ form.estado.label(class="form-label") }}
+                        {{ form.estado(class="form-control") }}
+                        {% if form.estado.errors %}
+                        <div class="text-danger">
+                            {% for error in form.estado.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
                         {% endif %}
-                    </p>
-                    <p class="card-text">Curso: {{ inscripcion.curso_slug }}</p>
-                    <p class="card-text">Fecha de Solicitud: {{ inscripcion.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}</p>
-                    <p class="card-text">Estado Actual: 
-                        {% if inscripcion.estado == 'pendiente' %}
-                            <span class="badge bg-info text-dark">Pendiente</span> {# Usar bg-info para Bootstrap 5 #}
-                        {% elif inscripcion.estado == 'aceptada' %}
-                            <span class="badge bg-success">Aceptada</span>
-                        {% elif inscripcion.estado == 'rechazada' %}
-                            <span class="badge bg-danger">Rechazada</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ inscripcion.estado }}</span>
+                    </div>
+
+                    <div class="form-group mb-3" id="razon_rechazo_group"> {# Añadir ID para JS #}
+                        {{ form.razon_rechazo.label(class="form-label") }}
+                        {{ form.razon_rechazo(class="form-control", rows="3") }}
+                        {% if form.razon_rechazo.errors %}
+                        <div class="text-danger">
+                            {% for error in form.razon_rechazo.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
                         {% endif %}
-                    </p>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        {{ form.hidden_tag() }} {# IMPORTANTE para el token CSRF #}
+                    </div>
 
-                        <div class="form-group mb-3">
-                            {{ form.estado.label(class="form-label") }}
-                            {{ form.estado(class="form-control") }}
-                            {% if form.estado.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.estado.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="form-group mb-3" id="razon_rechazo_group"> {# Añadir ID para JS #}
-                            {{ form.razon_rechazo.label(class="form-label") }}
-                            {{ form.razon_rechazo(class="form-control", rows="3") }}
-                            {% if form.razon_rechazo.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.razon_rechazo.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ form.submit(class_="btn btn-primary btn-lg") }}
-                            <a href="{{ url_for('admin.manage_inscripciones') }}" class="btn btn-secondary btn-lg ms-3">Volver a Inscripciones</a>
-                        </div>
-                    </form>
-                </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ form.submit(class_="btn btn-primary btn-lg") }}
+                        <a href="{{ url_for('admin.manage_inscripciones') }}"
+                            class="btn btn-secondary btn-lg ms-3">Volver a Inscripciones</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const estadoSelect = document.getElementById('estado');
         const razonRechazoField = document.getElementById('razon_rechazo');
         const razonRechazoGroup = document.getElementById('razon_rechazo_group'); // Usar el ID del div
